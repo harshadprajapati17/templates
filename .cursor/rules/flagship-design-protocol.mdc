@@ -1,0 +1,67 @@
+---
+description: Structural layout enforcement and geometry stabilization.
+glob: ["**/*.tsx", "**/*.jsx", "**/*.html", "**/*.vue"]
+alwaysApply: true
+---
+
+# FLAGSHIP DESIGN PROTOCOL
+
+Build layout structure from approved design plan.
+
+Do not reinterpret intent.
+
+---
+
+# STRUCTURE ENFORCEMENT
+
+If layout direction = horizontal:
+
+- Use explicit grid or flex row.
+- Two visible columns required.
+- Prevent full-width stacking on desktop.
+- Lock column widths using grid-template-columns.
+- Do not rely on content sizing.
+
+If ratio defined:
+
+- Use explicit structural ratio.
+- Do not approximate.
+
+If height = full viewport:
+
+- Use min-height: 100vh.
+- Never simulate with padding.
+
+---
+
+# CONTAINER RULES
+
+- Lock max-width (1200–1320px unless otherwise specified).
+- Center container.
+- Maintain structural symmetry unless asymmetry intentional.
+
+---
+
+# RESPONSIVE RULES
+
+If mobile behavior defined:
+
+- Explicitly implement breakpoint logic.
+- Collapse to single column when required.
+- Preserve hard constraint ordering.
+
+Never guess mobile behavior.
+
+---
+
+# STRUCTURAL STABILITY RULE
+
+Never:
+
+- Use overflow hacks
+- Fake ratios
+- Allow content to define column width
+- Modify direction decided upstream
+
+If structure violates hard constraints:
+Regenerate before output.
