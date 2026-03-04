@@ -376,6 +376,47 @@
         </div>
     </section>
 
+    <section class="gsap-pinned-split" aria-label="Pinned narrative with scrolling imagery">
+        <div class="gsap-pinned-inner">
+            <div class="gsap-pinned-grid">
+                <div class="gsap-pinned-left">
+                    <div>
+                        <p class="gsap-pinned-kicker">Pinned narrative</p>
+                        <h2 class="gsap-pinned-heading">
+                            The story holds<br>while the visuals move.
+                        </h2>
+                        <p class="gsap-pinned-description">
+                            The copy remains calmly centered in view as you move through a vertical stack of images.
+                            The column itself owns the 100vh height, so centering is locked to the viewport rather than
+                            the section.
+                        </p>
+                        <p class="gsap-pinned-footnote">
+                            The left column is pinned while the right column scrolls. Pin duration is determined purely
+                            by the right column&rsquo;s height.
+                        </p>
+                    </div>
+                </div>
+                <div class="gsap-pinned-right" aria-hidden="true">
+                    <figure class="gsap-pinned-panel">
+                        <img class="gsap-pinned-image"
+                            src="https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                            alt="">
+                    </figure>
+                    <figure class="gsap-pinned-panel">
+                        <img class="gsap-pinned-image"
+                            src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                            alt="">
+                    </figure>
+                    <figure class="gsap-pinned-panel">
+                        <img class="gsap-pinned-image"
+                            src="https://images.pexels.com/photos/3182768/pexels-photo-3182768.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                            alt="">
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="gsap-lab" aria-label="GSAP transitions lab">
         <div class="gsap-lab-inner">
             <p class="gsap-lab-kicker">GSAP transitions lab</p>
@@ -435,8 +476,6 @@
             </div>
         </div>
     </section>
-
-    
 
     <!-- jQuery and Bootstrap 4 JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

@@ -1,0 +1,32 @@
+---
+alwaysApply: false
+---
+# FORMAT
+
+Layout System
+
+Sections
+navigation
+hero
+content
+footer
+
+Grid
+12 column grid
+
+Hero layout
+2 columns
+
+Column distribution
+left 6
+right 6
+
+Dominance
+headline primary
+image secondary
+
+---
+
+# RULE
+
+Do not write HTML or CSS before the layout system is defined.

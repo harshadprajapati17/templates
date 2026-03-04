@@ -1,0 +1,32 @@
+---
+alwaysApply: false
+---
+# MODEL
+
+Define:
+
+interaction trigger  
+affected element  
+timeline progression  
+start condition  
+end condition  
+
+---
+
+# EXAMPLE
+
+Interaction: scroll reveal
+
+Trigger
+viewport intersection
+
+Timeline
+0% hidden
+50% fade in
+100% visible
+
+---
+
+# RULE
+
+Interaction behavior must be defined before animation code.

@@ -701,9 +701,96 @@ function initScrollIdea10(sectionEl) {
         );
 }
 
+function setupPinnedSplitSection() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+        return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    var section = document.querySelector('.gsap-pinned-split');
+    if (!section) return;
+
+    var left = section.querySelector('.gsap-pinned-left');
+    var right = section.querySelector('.gsap-pinned-right');
+    if (!left || !right) return;
+
+    var panels = right.querySelectorAll('.gsap-pinned-panel');
+    if (!panels.length) return;
+
+    ScrollTrigger.matchMedia({
+        '(min-width: 992px)': function () {
+            var pinTrigger = ScrollTrigger.create({
+                trigger: section,
+                start: 'top top',
+                end: function () {
+                    var extra = right.scrollHeight - window.innerHeight;
+                    return extra > 0 ? '+=' + extra : '+=0';
+                },
+                pin: left,
+                pinSpacing: true,
+                invalidateOnRefresh: true
+            });
+
+            gsap.set(panels, { autoAlpha: 0 });
+            gsap.set(panels[0], { autoAlpha: 1 });
+
+            var tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top center',
+                    end: 'bottom center',
+                    scrub: true,
+                    invalidateOnRefresh: true
+                }
+            });
+
+            var segment = 1 / panels.length;
+
+            panels.forEach(function (panel, index) {
+                if (index === 0) {
+                    return;
+                }
+
+                tl.to(
+                    panels,
+                    {
+                        autoAlpha: function (i) {
+                            return i === index ? 1 : 0.2;
+                        }
+                    },
+                    index * segment
+                );
+            });
+
+            return function () {
+                if (pinTrigger) {
+                    pinTrigger.kill();
+                }
+                if (tl.scrollTrigger) {
+                    tl.scrollTrigger.kill();
+                }
+                tl.kill();
+            };
+        },
+        '(max-width: 991px)': function () {
+            gsap.set(panels, { autoAlpha: 1 });
+
+            ScrollTrigger.getAll()
+                .filter(function (st) {
+                    return st.trigger === section || st.pin === left;
+                })
+                .forEach(function (st) {
+                    st.kill();
+                });
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     setupHeroAndMinds();
     setupGSAPLab();
     setupScrollIdeas();
+    setupPinnedSplitSection();
 });
 /* eslint-enable no-undef */

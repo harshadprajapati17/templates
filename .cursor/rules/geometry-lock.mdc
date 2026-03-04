@@ -1,0 +1,29 @@
+---
+alwaysApply: false
+---
+# FORMAT
+
+Geometry Model
+
+Container width
+max 1200px
+
+Columns
+50 / 50
+
+Left column
+height auto
+alignment center
+
+Right column
+image container
+aspect ratio 4:3
+
+Spacing
+section padding 120px
+
+---
+
+# RULE
+
+Implementation may begin only after geometry is defined.

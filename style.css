@@ -1441,3 +1441,116 @@
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.84);
 }
+
+/* GSAP pinned split section — left text pinned, right images scroll */
+.gsap-pinned-split {
+    background-color: #050509;
+    padding-block: 4rem 4rem;
+}
+
+@media (min-width: 992px) {
+    .gsap-pinned-split {
+        padding-block: 6rem 6rem;
+    }
+}
+
+.gsap-pinned-inner {
+    max-width: var(--blog-cards-max-width);
+    margin-inline: auto;
+    padding-inline: var(--page-horizontal-padding);
+}
+
+.gsap-pinned-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: flex-start;
+    column-gap: 3rem;
+    row-gap: 2.5rem;
+}
+
+@media (max-width: 767.98px) {
+    .gsap-pinned-grid {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 2.25rem;
+    }
+}
+
+.gsap-pinned-left {
+    max-width: var(--hero-text-max-width);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.gsap-pinned-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.9rem;
+}
+
+.gsap-pinned-heading {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin: 0 0 1.1rem;
+}
+
+@media (min-width: 992px) {
+    .gsap-pinned-heading {
+        font-size: 2.3rem;
+        line-height: 1.15;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .gsap-pinned-heading {
+        font-size: 1.85rem;
+        line-height: 1.18;
+    }
+}
+
+.gsap-pinned-description {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.82);
+    margin: 0 0 1.4rem;
+}
+
+.gsap-pinned-footnote {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 22rem;
+}
+
+.gsap-pinned-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.gsap-pinned-panel {
+    margin: 0;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent 55%),
+                linear-gradient(160deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+}
+
+.gsap-pinned-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 420px;
+    object-fit: cover;
+}
+
+@media (max-width: 767.98px) {
+    .gsap-pinned-image {
+        max-height: none;
+    }
+}
