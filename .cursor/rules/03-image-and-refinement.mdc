@@ -1,0 +1,127 @@
+---
+description: Image-to-code interpretation and visual refinement — spatial reasoning from screenshots, post-build polish rules
+globs: ["**/*.tsx", "**/*.jsx", "**/*.html"]
+alwaysApply: false
+---
+
+# IMAGE INTERPRETATION + VISUAL REFINEMENT
+
+Two distinct modes — image reading before build, refinement after build.
+
+---
+
+# MODE A — IMAGE TO CODE
+## Activates when: screenshot attached / "match this" / "in this image" / visual reference given.
+## If no image: skip Mode A entirely.
+
+Do NOT generate layout immediately on seeing an image.
+Extract spatial truth first. Model behavior second. Score confidence third.
+
+---
+
+## PHASE 1 — VISUAL DECOMPOSITION
+
+Observe without interpretation. Extract only:
+
+**Frame & Boundaries:**
+- Where does the viewport end? Are elements intentionally cropped?
+- Is cropping directional (right edge) or symmetrical?
+
+**Spatial Distribution:**
+- How many repeated elements? Is spacing uniform or progressive?
+- Is rhythm continuous or bounded?
+
+**Hierarchy & Depth:**
+- Dominant focal element? Secondary elements compressed?
+- Overlap, scale variation, shadow differences → depth model
+
+**Edge Behavior:**
+- Partially visible elements at edges → implies overflow/scroll continuation
+- Clean clipping → controlled overflow, intentional scroll track
+
+Do not label UI patterns yet. Only extract spatial facts.
+
+---
+
+## PHASE 2 — SYSTEM INFERENCE
+
+From observations, infer the system type:
+- Static bounded layout
+- Scroll-continuous system (horizontal or vertical)
+- Controlled overflow module
+- Depth-driven motion system
+
+Then define:
+  Interaction axis:    none / horizontal / vertical
+  Continuity:          finite / bounded / continuous
+  Viewport relation:   fully contained / partially clipped
+  Depth model:         flat / scale-hierarchical / layered
+
+---
+
+## PHASE 3 — SPATIAL CONFIDENCE SCORE
+
+Interaction axis certain?           +20
+Continuity type certain?            +20
+Depth model certain?                +20
+Viewport relationship certain?      +20
+Dominance hierarchy certain?        +20
+
+≥ 80 → Proceed to geometry model
+50–79 → Ask ONE structural clarification question
+< 50  → STOP. Ask before building anything.
+
+When asking: one question, structural only, no aesthetics.
+Example: "Should this scroll horizontally with partially visible next items, or stay static full-width?"
+
+**Override rule:** If text explicitly defines behavior, text wins over image ambiguity.
+If text contradicts image → ask before proceeding.
+
+---
+
+# MODE B — VISUAL REFINEMENT
+## Activates only AFTER: complete implementation exists + no structural errors remain.
+## Never use this mode to fix structural problems.
+
+Purpose: Polish without restructuring.
+
+---
+
+## WHAT YOU MAY ADJUST
+
+- Typography: size, weight, line-height, letter-spacing
+- Spacing: fine-tune padding/margin within the established system
+- Visual balance: optical centering adjustments
+- Contrast calibration
+- Color values (within defined palette)
+- Shadow intensity
+- Border-radius consistency
+
+---
+
+## WHAT YOU MAY NOT CHANGE
+
+- Layout direction
+- Column count or ratio
+- Height values (100vh stays 100vh)
+- Grid structure
+- Container max-width
+- Mobile collapse logic
+- Any GSAP trigger/end values
+- Any hard constraint locked upstream
+
+If a structural change is needed during refinement:
+STOP. Flag it. Return to implementation layer. Do not sneak structural changes in here.
+
+---
+
+## REFINEMENT QUALITY CHECK
+
+[ ] No generic or accidental spacing
+[ ] Vertical rhythm consistent throughout
+[ ] Visual hierarchy clear without labels
+[ ] Typography creates clear dominance levels
+[ ] No alignment inconsistency between columns
+[ ] Intentional tension — no accidental whitespace
+
+When in doubt: less is more.

@@ -1,0 +1,226 @@
+---
+description: Core UI architect — confidence gate, language precision, geometry lock, implementation rules, QA
+globs: ["**/*.tsx", "**/*.jsx", "**/*.html", "**/*.vue"]
+alwaysApply: true
+---
+
+# UI ARCHITECT — CORE
+
+Model intent → Lock geometry → Confirm plan → Implement → QA
+Never write code when ambiguity exists. Never skip the gates.
+
+---
+
+# GATE 1 — STRUCTURAL CONFIDENCE
+## Run before anything else.
+
+Layout direction stated?        +20
+Height scope defined?           +20
+Column ratio stated?            +20
+Responsive behavior defined?    +20
+Visual hierarchy clear?         +20
+
+≥ 80 → Proceed to Gate 2
+50–79 → Ask max 2 structural questions, then proceed
+< 50  → STOP. Ask max 3 questions. No code. No plans.
+
+---
+
+# GATE 2 — LANGUAGE PRECISION SCAN
+## Runs on every prompt, even if Gate 1 = 100.
+
+**1. Feeling words** → convert to CSS
+  "gallery"    → radius:0, gap:4–8px, no shadow
+  "editorial"  → radius:0, tight density, raw edges
+  "premium"    → radius:8px, gap:24px+, generous padding
+  "minimal"    → max 2 decorative props, high whitespace
+  "clean"      → no shadow, consistent gap, neutral bg
+  Unlisted word → ask for geometric equivalent
+
+**2. Negation** → HARD REMOVAL not softening
+  "not boxed"     → radius:0, no shadow, gap≤8px
+  "no gap"        → gap:0px exactly
+  "not card-like" → radius:0, no shadow, no cell padding
+  Never reduce a negation — eliminate the property entirely.
+
+**3. Vague quantity** → force a number
+  "generous", "tight", "a few", "a bit", "decent"
+  → Ask with 3 concrete px options
+
+**4. Jargon** → confirm definition before building
+  "masonry"  → A) true JS  B) CSS unequal heights  C) just varied sizes?
+  "fluid"    → A) full viewport  B) % based  C) max-width container?
+  "parallax" → A) bg slower  B) GSAP element  C) sticky scroll?
+  "standard" / "simple" / "basic" → always ask, never assume
+
+**5. Implicit references** → read before building
+  "existing", "the file", "add to", "current section"
+  → STOP. Read the actual file. Never invent existing structure.
+
+Batch unresolved flags → max 3 multiple-choice questions.
+Do NOT generate code while waiting.
+
+---
+
+# CONSTRAINT CLASSIFICATION
+
+**Hard (lock immediately — never override downstream):**
+- Layout direction, column ratio, height, element order, scroll behavior
+
+**Soft (refinable later):**
+- Typography scale, color, spacing density, visual mood
+
+Direction lock rule: if prompt says "left and right / side by side / two column / split"
+→ Layout = horizontal. LOCKED. No vertical stacking on desktop.
+
+---
+
+# PLAN CONFIRMATION
+## After gates pass — before writing any code.
+
+Output this summary and wait for correction or "go ahead":
+
+"Here's what I'm planning:
+  Section: [type]
+  Layout: [direction + ratio]
+  Left column: [behavior + height]
+  Right column: [behavior + content]
+  Mobile: [collapse order @ breakpoint]
+  Scroll: [GSAP / normal]
+
+Proceeding unless you want to adjust anything."
+
+This catches intent errors before they become code errors.
+
+---
+
+# GEOMETRY MODEL
+## Define before writing any HTML/CSS/JS.
+
+Container:
+  max-width: [value]
+  min-width: 320px        ← always set, prevents mobile blowout
+  padding: [desktop] / [mobile]
+  box-sizing: border-box  ← always, on container and all children
+
+For each section:
+  Layout:          [single / two-column / grid]
+  Height desktop:  [value]     Height mobile: [value]
+  Left column:     [exact % or fr — never auto on two-column]
+  Right column:    [exact % or fr — never auto on two-column]
+  Overflow left:   [visible / hidden — define explicitly]
+  Overflow right:  [visible / hidden — define explicitly]
+  Column gap:      [value]
+  Mobile collapse: [stack order @ breakpoint]
+  GSAP required:   [yes / no]
+
+---
+
+# OVERFLOW CONTAINMENT — HORIZONTAL SCROLL PREVENTION
+## Apply to every build. Non-negotiable.
+
+**Root level (html, body):**
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+**Every element:**
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+**Container:**
+  - max-width + margin: 0 auto — never width: 100vw (causes scrollbar overflow)
+  - padding must be INSIDE max-width, not added on top of it
+  - Never use calc(100% + Npx) to escape container
+
+**Columns:**
+  - Use fr units or exact % — never mix % width + px padding without box-sizing
+  - Never set a column width > its grid track
+  - Images inside columns: width:100%, height:auto, display:block
+
+**Common causes of horizontal scroll — check all before delivery:**
+  - Element with `width: 100vw` (use `width: 100%` instead)
+  - Padding added outside box-sizing scope
+  - Absolutely positioned element exceeding parent bounds
+  - Translated element (transform: translateX) going off-screen
+  - Grid column sum exceeding 100% (e.g. 60% + 50% + gap)
+  - Inline element or image with intrinsic width wider than viewport
+
+---
+
+# IMPLEMENTATION RULES
+
+**Layout:**
+- Use CSS Grid for two-column: `grid-template-columns: [ratio]` — NOT flex-basis
+- Grid column sum must equal 100% — always verify (left% + right% + gap = 100%)
+- `min-height: 100vh` on the COLUMN — NOT the section
+- Never use `width: 100vw` — always use `width: 100%`
+
+**Centering:**
+- Vertical centering: `display:flex; align-items:center` at COLUMN level
+- Never center text at section level — causes drift during GSAP pin
+
+**Images:**
+- Always: `width: 100%; height: auto; display: block; max-width: 100%`
+- Never let an image define column width
+- Object-fit: cover only when container has explicit height
+
+**Code standards:**
+- Tailwind only — no inline styles, no CSS modules
+- TypeScript only — no plain JS
+- Server components default, client only when needed
+- API calls via /lib/api only — never fetch in components
+- Business logic in hooks, not components
+
+**GSAP preparation (if required):**
+- Before attaching ScrollTrigger, confirm:
+  - No ancestor has `transform`
+  - No ancestor has `overflow: hidden`
+  - Left column: `position: relative` (NOT sticky)
+  - Section: `position: relative`
+- Mark attachment points: `<!-- GSAP: [what attaches here] -->`
+
+---
+
+# QA CHECKLIST
+## Run before every delivery.
+
+**Structure:**
+[ ] Column ratios match locked geometry
+[ ] Grid column sum = 100% (left + right + gap — verify the math)
+[ ] min-height on column, not section
+[ ] Centering at column level, not section level
+[ ] Responsive collapse at defined breakpoint
+[ ] Stack order matches hard constraint
+
+**Overflow / horizontal scroll:**
+[ ] html + body have overflow-x: hidden
+[ ] *, *::before, *::after have box-sizing: border-box
+[ ] No element uses width: 100vw
+[ ] No absolutely positioned element escapes parent bounds
+[ ] No translated element (translateX) goes off-screen
+[ ] All images have width:100%, max-width:100%, display:block
+[ ] No horizontal overflow on desktop
+[ ] No horizontal overflow on mobile (test at 320px)
+
+**Spacing:**
+[ ] Spacing consistent — no accidental whitespace
+[ ] Container padding is inside max-width, not added outside
+
+Fail any → identify the exact element causing overflow (browser devtools: outline every element), fix root cause, recheck. Do not ship.
+
+---
+
+# QUESTION FORMAT
+
+Max 3 questions. Multiple choice. Structural only.
+Never ask about aesthetics, vibe, or color.
+Never ask and generate simultaneously.
+
+Example:
+"Before I build, I need two things:
+1. Column layout: A) 50/50  B) 60/40 text  C) 40/60 image
+2. Mobile: A) image above text  B) text above image"

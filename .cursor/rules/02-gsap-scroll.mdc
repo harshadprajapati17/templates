@@ -1,0 +1,119 @@
+---
+description: GSAP scroll architecture — pin physics, scroll modeling, stability rules, confidence gate
+globs: ["**/*.tsx", "**/*.jsx", "**/*.html"]
+alwaysApply: false
+---
+
+# GSAP SCROLL ARCHITECTURE
+
+Only activates when GSAP was flagged in geometry model.
+If GSAP not required: skip entirely.
+
+GSAP is a physics engine. Model the scroll system before writing a single line.
+
+---
+
+# GSAP CONFIDENCE GATE
+## Run before any ScrollTrigger code.
+
+Scroll container clearly defined?               +20
+Pin duration deterministically calculable?      +20
+Layout stable (no overflow / transform issues)? +20
+Start/end derived from geometry (not guessed)?  +20
+Responsive behavior defined?                    +20
+
+≥ 80 → Proceed
+50–79 → Ask ONE structural question, re-score
+< 50  → STOP. Resolve geometry first. No GSAP code.
+
+---
+
+# STEP 1 — SCROLL SYSTEM MODEL
+
+Define before any code:
+- Scroll type: native browser / Lenis / Locomotive / nested container?
+- If custom scroller: scrollerProxy required? (yes/no)
+- Pin exists on mobile? (yes / no / adapted)
+- Does layout change at breakpoints that affect pin?
+
+---
+
+# STEP 2 — LAYOUT STABILIZATION
+
+Before `pin: true`, confirm ALL of these:
+
+[ ] Pinned element has fixed, deterministic width
+[ ] Pinned element height = 100vh (explicit, not auto)
+[ ] No ancestor has `transform`
+[ ] No ancestor has `overflow: hidden`
+[ ] Section has `position: relative`
+[ ] Left column has `position: relative` — NOT sticky
+[ ] Right column height is auto (grows with stacked content)
+[ ] Left column centering is at column level (flex + align-items:center)
+
+If any fail: fix layout FIRST. Never compensate with ScrollTrigger settings.
+
+---
+
+# STEP 3 — PIN PHYSICS MODEL
+
+For left-pin / right-scroll pattern:
+
+Structure required:
+  Wrapper:       position: relative
+  Left column:   width:50%, height:100vh, display:flex, align-items:center, position:relative
+  Right column:  width:50%, height:auto (grows with images)
+
+Pin duration formula:
+  end: () => "+=" + (rightColumn.offsetHeight - window.innerHeight)
+
+NEVER use:
+  end: "+=2000"          ← arbitrary, breaks on resize
+  Hardcoded px offsets   ← brittle
+  Trial-and-error values ← not physics
+
+Pin must release exactly when last image finishes scrolling.
+
+---
+
+# STEP 4 — SCROLLTRIGGER REQUIRED SETTINGS
+
+Always include:
+  invalidateOnRefresh: true     ← recalculates on resize
+  scrub: true                   ← smooth scroll link
+  start: "top top"              ← pin starts when section hits viewport top
+  end: () => "+=" + (rightColumn.offsetHeight - window.innerHeight)
+
+Always add resize handler:
+  window.addEventListener("resize", () => ScrollTrigger.refresh())
+
+---
+
+# STEP 5 — STABILITY RULES
+
+Never:
+- Combine `position: sticky` with GSAP pin on same element
+- Animate `height`, `width`, or `padding` while pinned
+- Use nested pinning unless fully modeled
+- Apply GSAP before geometry is locked
+- Fix layout jumps with scrub tweaks — fix the layout
+
+Disable pin on mobile:
+  ScrollTrigger.matchMedia({
+    "(min-width: 768px)": function() { /* pin logic here */ }
+  })
+
+---
+
+# COHERENCE CHECKLIST
+
+[ ] Pin duration equals visual scroll length
+[ ] Unpin occurs at logical section boundary
+[ ] No layout jump at pin start
+[ ] No layout jump at pin release
+[ ] No layout jump on page load
+[ ] ScrollTrigger.refresh() doesn't break layout
+[ ] Mobile: pin disabled or adapted as defined
+[ ] scrub is smooth, no stuttering
+
+Any fail → fix root cause, not symptoms.
